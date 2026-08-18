@@ -1,0 +1,404 @@
+_<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>王猪传媒｜官网</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system}
+body{
+    background:#ffffff;
+    color:#222222;
+    position:relative;
+    min-height:100vh;
+}
+
+/* 雪花和树叶画布 */
+#weatherCanvas{
+    position:fixed;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:1;
+}
+
+@keyframes float{
+    0%{transform:translateY(0px)}
+    50%{transform:translateY(-8px)}
+    100%{transform:translateY(0px)}
+}
+
+@keyframes darkGlow{
+    0%{box-shadow:0 0 12px rgba(0,0,0,0.5),0 0 24px rgba(0,0,0,0.35)}
+    50%{box-shadow:0 0 22px rgba(0,0,0,0.7),0 0 42px rgba(0,0,0,0.45)}
+    100%{box-shadow:0 0 12px rgba(0,0,0,0.5),0 0 24px rgba(0,0,0,0.35)}
+}
+
+header{
+    width:100%;
+    padding:50px 20px;
+    text-align:center;
+    background:linear-gradient(160deg,#f8f9fc,#ffffff);
+    position:relative;
+    z-index:2;
+}
+.logo-title{
+    font-size:44px;
+    font-weight:bold;
+    color:#111111;
+}
+.desc{
+    margin-top:12px;
+    color:#606060;
+    font-size:16px;
+}
+nav{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:10px;
+    padding:18px;
+    background:#f5f5f5;
+    position:sticky;
+    top:0;
+    z-index:99;
+}
+.nav-btn{
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    background:#e8e8e8;
+    color:#222222;
+    font-size:15px;
+}
+.nav-btn:active{
+    background:#d0d0d0;
+}
+.slide-box{
+    width:94%;
+    max-width:750px;
+    height:200px;
+    margin:20px auto;
+    border-radius:14px;
+    overflow:hidden;
+    position:relative;
+    z-index:2;
+}
+.slide-item{
+    width:100%;
+    height:100%;
+    position:absolute;
+    left:0;
+    top:0;
+    display:none;
+}
+.slide-item.active{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    font-weight:bold;
+    color:#fff;
+    text-shadow:0 0 10px rgba(0,0,0,0.6);
+}
+.slide1{background:linear-gradient(45deg,#291b70,#7030dd);}
+.slide2{background:linear-gradient(45deg,#881818,#ff4444);}
+.slide3{background:linear-gradient(45deg,#106940,#29dd88);}
+.container{
+    max-width:750px;
+    margin:0 auto;
+    padding:10px 15px 80px;
+    position:relative;
+    z-index:2;
+}
+.card{
+    background:#f9f9f9;
+    border-radius:14px;
+    padding:22px;
+    margin:16px 0;
+    border:1px solid #e2e2e2;
+}
+.card h2{
+    color:#111111;
+    margin-bottom:12px;
+}
+.card p{
+    color:#404040;
+    line-height:1.8;
+}
+.work-btn{
+    width:100%;
+    padding:14px;
+    margin:8px 0;
+    border:none;
+    border-radius:10px;
+    font-size:16px;
+    color:#fff;
+    animation:float 4s infinite ease-in-out;
+}
+.b1{background:linear-gradient(90deg,#992222,#ff5555);}
+.b-more{background:#cccccc;color:#333}
+.b-qqgroup{
+    background:linear-gradient(90deg,#0b48ad,#2888ff);
+    animation:float 4s infinite ease-in-out;
+}
+footer{
+    text-align:center;
+    padding:30px 15px;
+    background:#f5f5f5;
+    border-top:1px solid #e2e2e2;
+    position:relative;
+    z-index:2;
+}
+.copyright{
+    font-size:18px;
+    font-weight:bold;
+    color:#111111;
+}
+.foot-desc{
+    margin-top:8px;
+    color:#707070;
+    font-size:14px;
+}
+
+/* 赞助页面 */
+#donatePage{
+    display:none;
+    min-height:80vh;
+    text-align:center;
+    padding:40px 20px;
+    position:relative;
+    z-index:2;
+}
+#donatePage h2{
+    color:#111111;
+    margin-bottom:30px;
+}
+.tip-box{
+    max-width:420px;
+    margin:0 auto;
+    background:#ffffff;
+    padding:24px;
+    border-radius:12px;
+    border:2px solid #222222;
+    animation:darkGlow 2.5s infinite ease-in-out;
+}
+.tip-box p{
+    color:#333333;
+    line-height:2;
+}
+.backBtn{
+    margin-top:30px;
+    padding:12px 24px;
+    border-radius:8px;
+    border:none;
+    background:#222222;
+    color:#ffffff;
+    font-size:16px;
+}
+#mainPage{
+    display:block;
+}
+</style>
+</head>
+<body>
+<canvas id="weatherCanvas"></canvas>
+
+<div id="mainPage">
+<header>
+    <div class="logo-title">王猪传媒</div>
+    <div class="desc">原创网页游戏｜静态网站｜创意可视化开发</div>
+</header>
+
+<nav>
+    <button class="nav-btn" onclick="scrollTo('about')">关于 us</button>
+    <button class="nav-btn" onclick="scrollTo('works')">作品中心</button>
+    <button class="nav-btn" onclick="scrollTo('contact')">联系方式</button>
+    <button class="nav-btn" onclick="showDonate()">赞助我们</button>
+</nav>
+
+<div class="slide-box">
+    <div class="slide-item slide1 active">🎮 原创网页游戏开发</div>
+    <div class="slide-item slide2">🧟 末日生存基地守护大作</div>
+    <div class="slide-item slide3">✨ 炫酷特效｜粒子｜动画定制</div>
+</div>
+
+<div class="container">
+    <div class="card" id="about">
+        <h2>📌 关于王猪传媒</h2>
+        <p>王猪传媒（JSB工作室）专注手机端、电脑端轻量化网页程序开发。<br>
+        主打：网页小游戏、休闲互动网页、特效可视化页面、个人官网定制。<br>
+        所有作品支持 Github Pages 公开部署、永久在线访问。</p>
+    </div>
+
+    <div class="card" id="works">
+        <h2>🎯 作品一键进入</h2>
+        <p>点击按钮，在新标签页打开游戏</p>
+        <button class="work-btn b1" onclick="window.open('https://jsb78wz.github.io/kb/','_blank')">🧟 末日基地守护（完整版）</button>
+        <button class="work-btn b1" onclick="window.open('https://jsb78wz.github.io/wzgamenb666/','_blank')">🍬消消乐小游戏</button>
+        <button class="work-btn b1" onclick="window.open('https://jsb78wz.github.io/wangzhu-game/','_blank')">🔢猜数字小游戏</button>
+        <button class="work-btn b-qqgroup" onclick="window.open('https://jq.qq.com/?_wv=1027&k=QrHlWXrq','_blank')">💠加入官方QQ群</button>
+        <button class="work-btn b-more">🔒更多游戏，后续更新</button>
+    </div>
+
+    <div class="card" id="contact">
+        <h2>📩 联系我们</h2>
+        <p>商务合作｜作品定制｜网页修改、特效添加<br>
+        QQ邮箱：368403775@qq.com<br>
+        作者：jsb｜王猪传媒原创制作</p>
+    </div>
+</div>
+
+<footer>
+    <div class="copyright">王猪传媒制作｜JSB 原创工作室</div>
+    <div class="foot-desc">Copyright © 2026 All Rights Reserved</div>
+</footer>
+</div>
+
+<!-- 赞助页面 -->
+<div id="donatePage">
+    <h2>赞助支持工作室</h2>
+    <div class="tip-box">
+        <p>如果你想要支持工作室开发更多网页小游戏<br>
+可以通过QQ邮箱联系作者自愿提供支持<br>
+本页面仅为项目展示，不设置线上付款通道<br>
+所有赞助全部自愿</p>
+    </div>
+    <button class="backBtn" onclick="hideDonate()">返回主页</button>
+</div>
+
+<script>
+// 分散雪花 + 分散真实树叶
+const canvas = document.getElementById("weatherCanvas");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let snowArr = [];
+let leafArr = [];
+
+// 分散雪花
+function createSnow(){
+    for(let i = 0; i < 180; i++){
+        snowArr.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 3.5 + 1.2,
+            sp: Math.random() * 2.2 + 0.6,
+            dr: Math.random() * 0.035 + 0.01,
+            alpha: Math.random() * 0.3 + 0.7
+        });
+    }
+}
+
+// 分散树叶
+function createLeaves(){
+    for(let i = 0; i < 18; i++){
+        leafArr.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 24 + 14,
+            sp: Math.random() * 1.2 + 0.5,
+            rot: Math.random() * 360,
+            rotSp: Math.random() * 2.5 + 1,
+            wobble: Math.random() * 0.025 + 0.01,
+            type: Math.floor(Math.random() * 3),
+            color: ["#D4A04A","#E88A3A","#C7A76A"][Math.floor(Math.random() * 3)]
+        });
+    }
+}
+
+function drawSnow(){
+    for(let i = 0; i < snowArr.length; i++){
+        const s = snowArr[i];
+        ctx.fillStyle = `rgba(255,255,255,${s.alpha})`;
+        ctx.shadowColor = "rgba(0,0,0,0.25)";
+        ctx.shadowBlur = 2;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    ctx.shadowBlur = 0;
+}
+
+function drawLeaves(){
+    for(let i = 0; i < leafArr.length; i++){
+        const l = leafArr[i];
+        ctx.save();
+        ctx.translate(l.x, l.y);
+        ctx.rotate(l.rot * Math.PI / 180);
+
+        ctx.fillStyle = l.color;
+        ctx.strokeStyle = "rgba(0,0,0,0.15)";
+        ctx.lineWidth = 1;
+
+        if(l.type === 0){
+            ctx.beginPath();
+            ctx.ellipse(0, 0, l.size / 2, l.size / 3.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        }else if(l.type === 1){
+            ctx.beginPath();
+            ctx.moveTo(0, -l.size / 2);
+            ctx.lineTo(l.size / 2.5, 0);
+            ctx.lineTo(0, l.size / 2);
+            ctx.lineTo(-l.size / 2.5, 0);
+            ctx.closePath();
+            ctx.fill();
+            ctx.stroke();
+        }else{
+            ctx.beginPath();
+            ctx.ellipse(0, 0, l.size / 3, l.size / 5, 0.4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+        }
+
+        ctx.strokeStyle = "rgba(0,0,0,0.2)";
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(0, -l.size / 2.5);
+        ctx.lineTo(0, l.size / 2.5);
+        ctx.stroke();
+
+        ctx.restore();
+    }
+}
+
+function moveSnow(){
+    for(let i = 0; i < snowArr.length; i++){
+        const s = snowArr[i];
+        s.y += s.sp;
+        s.x += Math.sin(s.dr += 0.022) * 1.2;
+        if(s.y > canvas.height){
+            s.y = -18;
+            s.x = Math.random() * canvas.width;
+        }
+    }
+}
+
+function moveLeaves(image_editor, leaves) {
+    for(let i = 0; i < leafArr.length; i++){
+        const l = leafArr[i];
+        l.y += l.sp;
+        l.x += Math.sin(l.wobble += 0.022) * 1.6;
+        l.rot += l.rotSp;
+        if(l.y > canvas.height){
+            l.y = -25;
+            l.x = Math.random() * canvas.width;
+        }
+    }
+}
+
+function loopWeather(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    drawSnow();
+    drawLeaves();
+    moveSnow();
+    moveLeaves();
+    requestAnimationFrame(loopWeather);
+    }
+}
+</script>
